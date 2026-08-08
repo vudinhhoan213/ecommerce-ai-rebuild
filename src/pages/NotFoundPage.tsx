@@ -5,7 +5,7 @@ function NotFoundPage() {
     <section>
       <h1>404 - Không tìm thấy trang</h1>
       <p>Đường dẫn bạn truy cập không tồn tại.</p>
-      <Link to="/">Quay về trang chủ</Link>
+      <Link to="/shop">Quay về cửa hàng</Link>
     </section>
   )
 }
