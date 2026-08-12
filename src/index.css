@@ -76,6 +76,108 @@ a {
   color: #0f172a;
 }
 
+.shop-toolbar {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.7fr) minmax(24rem, 1.3fr);
+  gap: 1rem 1.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+}
+
+.shop-search-control,
+.shop-filter-controls label {
+  display: grid;
+  gap: 0.5rem;
+  color: #334155;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.shop-control-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.shop-control-input {
+  width: 100%;
+  min-height: 2.625rem;
+  padding: 0.625rem 0.75rem;
+  color: #0f172a;
+  font: inherit;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+}
+
+.shop-control-input:focus {
+  border-color: #2563eb;
+  outline: 0.1875rem solid rgb(37 99 235 / 0.2);
+}
+
+.shop-control-input[aria-invalid="true"] {
+  border-color: #dc2626;
+}
+
+.shop-filter-panel {
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.shop-filter-panel legend {
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+
+.shop-filter-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(8rem, 1fr)) auto;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.price-filter-reset {
+  min-height: 2.625rem;
+  padding: 0.625rem 0.875rem;
+  color: #1d4ed8;
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.price-filter-reset:hover {
+  background: #dbeafe;
+}
+
+.price-filter-reset:focus-visible {
+  outline: 0.1875rem solid #2563eb;
+  outline-offset: 0.125rem;
+}
+
+.price-filter-error {
+  margin: 0.75rem 0 0;
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.shop-results-summary {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
@@ -296,12 +398,24 @@ a {
     gap: 1rem;
   }
 
+  .shop-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .shop-filter-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .product-details {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 30rem) {
+  .shop-filter-controls {
+    grid-template-columns: 1fr;
+  }
+
   .product-grid {
     grid-template-columns: 1fr;
   }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import { getProduct } from '../services/productService'
 import type { Product } from '../types/product'
 
@@ -10,6 +10,8 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
 
 function ProductDetailsPage() {
   const { productId } = useParams<{ productId: string }>()
+  const { search } = useLocation()
+  const shopUrl = `/shop${search}`
   const [product, setProduct] = useState<Product | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isNotFound, setIsNotFound] = useState(false)
@@ -71,7 +73,7 @@ function ProductDetailsPage() {
         <p className="products-state" role="status">
           Sản phẩm bạn đang tìm không tồn tại.
         </p>
-        <Link className="product-details-back-link" to="/shop">
+        <Link className="product-details-back-link" to={shopUrl}>
           Quay lại danh sách sản phẩm
         </Link>
       </section>
@@ -96,7 +98,7 @@ function ProductDetailsPage() {
         <p className="products-state" role="status">
           Sản phẩm bạn đang tìm không tồn tại.
         </p>
-        <Link className="product-details-back-link" to="/shop">
+        <Link className="product-details-back-link" to={shopUrl}>
           Quay lại danh sách sản phẩm
         </Link>
       </section>

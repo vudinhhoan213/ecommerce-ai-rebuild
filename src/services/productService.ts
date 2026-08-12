@@ -1,11 +1,12 @@
 import type { Product, ProductsResponse } from '../types/product'
 
 const PRODUCTS_ENDPOINT = 'https://dummyjson.com/products'
+const ALL_PRODUCTS_ENDPOINT = `${PRODUCTS_ENDPOINT}?limit=0`
 
 export async function getProducts(
   signal?: AbortSignal,
 ): Promise<ProductsResponse> {
-  const response = await fetch(PRODUCTS_ENDPOINT, { signal })
+  const response = await fetch(ALL_PRODUCTS_ENDPOINT, { signal })
 
   if (!response.ok) {
     throw new Error(`Không thể tải sản phẩm (${response.status})`)

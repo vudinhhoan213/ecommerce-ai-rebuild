@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { Product } from '../types/product'
 
 interface ProductCardProps {
@@ -11,12 +11,14 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
 })
 
 function ProductCard({ product }: ProductCardProps) {
+  const { search } = useLocation()
+
   return (
     <article className="product-card">
       <Link
         aria-label={`Xem chi tiết ${product.title}`}
         className="product-card-link"
-        to={`/shop/${product.id}`}
+        to={`/shop/${product.id}${search}`}
       >
         <div className="product-card-image-wrapper">
           <img

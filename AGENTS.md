@@ -50,3 +50,17 @@ Phải đọc:
 - Đổi state management
 - Đổi cấu trúc lớn
 - Sửa ngoài task
+
+## Quy trình làm việc với task
+
+Khi nhận một TASK mới:
+
+1. Đọc task và source liên quan.
+2. Review yêu cầu trước.
+3. Nếu có điểm chưa rõ, hỏi người phụ trách.
+4. Sau khi task được chốt, lập kế hoạch kỹ thuật.
+5. Không sửa source trước khi kế hoạch được phê duyệt.
+6. Sau khi được duyệt mới triển khai.
+7. Chạy lint và build.
+8. Báo cáo file thay đổi và phần cần review.
+9. Không tự commit.
