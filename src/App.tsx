@@ -1,4 +1,14 @@
-import { Navigate, NavLink, Route, Routes } from 'react-router-dom'
+import {
+  Navigate,
+  NavLink,
+  Route,
+  Routes,
+  useNavigate,
+} from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from './app/hooks'
+import { removeAuthSession } from './app/authStorage'
+import { clearAuthSession } from './app/authSlice'
+import ProtectedRoute from './components/ProtectedRoute'
 import CartPage from './pages/CartPage'
 import LoginPage from './pages/LoginPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -13,6 +23,16 @@ const navigationItems = [
 ]
 
 function App() {
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const session = useAppSelector((state) => state.auth.session)
+
+  function handleLogout() {
+    removeAuthSession()
+    dispatch(clearAuthSession())
+    navigate('/shop', { replace: true })
+  }
+
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -33,8 +53,30 @@ function App() {
                 </NavLink>
               </li>
             ))}
+            {!session && (
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive ? 'navigation-link active' : 'navigation-link'
+                  }
+                  to="/login"
+                >
+                  Đăng nhập
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
+        {session && (
+          <div className="account-navigation">
+            <span>
+              {session.user.firstName} {session.user.lastName}
+            </span>
+            <button onClick={handleLogout} type="button">
+              Đăng xuất
+            </button>
+          </div>
+        )}
       </header>
 
       <main className="page-content">
@@ -42,8 +84,22 @@ function App() {
           <Route path="/" element={<Navigate replace to="/shop" />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/shop/:productId" element={<ProductDetailsPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <CartPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/login" element={<LoginPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

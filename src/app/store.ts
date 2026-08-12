@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+import authReducer from './authSlice'
 
 const initialState = {
   initialized: true,
@@ -11,6 +12,7 @@ function appReducer(state = initialState) {
 export const store = configureStore({
   reducer: {
     app: appReducer,
+    auth: authReducer,
   },
 })
 
