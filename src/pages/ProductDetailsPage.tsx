@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { getProduct } from '../services/productService'
 import type { Product } from '../types/product'
+import { getProductColors } from '../utils/productColors'
 
 const priceFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -21,6 +22,7 @@ function ProductDetailsPage() {
   const [resolvedProductId, setResolvedProductId] = useState(productId)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0)
+  const [selectedColorId, setSelectedColorId] = useState<string | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -43,6 +45,7 @@ function ProductDetailsPage() {
           setProduct(data)
           setSelectedImageIndex(0)
           setThumbnailStartIndex(0)
+          setSelectedColorId(null)
           setError(null)
           setIsNotFound(false)
         }
@@ -138,6 +141,9 @@ function ProductDetailsPage() {
     thumbnailStartIndex + visibleThumbnailCount,
   )
   const hasThumbnailNavigation = productImages.length > visibleThumbnailCount
+  const productColors = getProductColors(product.id)
+  const selectedColor =
+    productColors.find((color) => color.id === selectedColorId) ?? null
 
   return (
     <section className="product-details">
@@ -231,6 +237,35 @@ function ProductDetailsPage() {
           <span aria-hidden="true">★</span> {product.rating} / 5
         </p>
         <p className="product-details-stock">Còn {product.stock} sản phẩm</p>
+        <fieldset className="product-color-selector">
+          <legend>Màu sắc</legend>
+          <div className="product-color-options">
+            {productColors.map((color) => (
+              <button
+                aria-label={`Chọn màu ${color.name}`}
+                aria-pressed={selectedColorId === color.id}
+                className={`product-color-option${
+                  selectedColorId === color.id ? ' selected' : ''
+                }`}
+                key={color.id}
+                onClick={() => setSelectedColorId(color.id)}
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  className="product-color-swatch"
+                  style={{ backgroundColor: color.value }}
+                />
+                <span>{color.name}</span>
+              </button>
+            ))}
+          </div>
+          <p aria-live="polite" className="product-selected-color">
+            {selectedColor
+              ? `Màu đã chọn: ${selectedColor.name}`
+              : 'Chưa chọn màu'}
+          </p>
+        </fieldset>
         <p className="product-details-description">{product.description}</p>
 
         <div className="product-details-actions">

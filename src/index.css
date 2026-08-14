@@ -356,6 +356,21 @@ a {
   font-weight: 700;
 }
 
+.product-card-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.product-card-color-swatch {
+  width: 1.125rem;
+  height: 1.125rem;
+  border: 1px solid #94a3b8;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.125rem #ffffff;
+}
+
 .products-state {
   padding: 1rem;
   margin: 0;
@@ -507,6 +522,69 @@ a {
 
 .product-details-stock {
   color: #15803d;
+}
+
+.product-color-selector {
+  padding: 0;
+  margin: 1.5rem 0 0;
+  border: 0;
+}
+
+.product-color-selector legend {
+  padding: 0;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.product-color-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.product-color-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.625rem;
+  padding: 0.5rem 0.75rem;
+  color: #334155;
+  font: inherit;
+  font-weight: 600;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.product-color-option:hover {
+  border-color: #93c5fd;
+}
+
+.product-color-option.selected {
+  color: #1d4ed8;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 0.125rem rgb(37 99 235 / 0.15);
+}
+
+.product-color-option:focus-visible {
+  outline: 0.1875rem solid #2563eb;
+  outline-offset: 0.125rem;
+}
+
+.product-color-swatch {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid #64748b;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 0.125rem #ffffff;
+}
+
+.product-selected-color {
+  margin: 0.75rem 0 0;
+  color: #64748b;
+  font-size: 0.875rem;
 }
 
 .product-details-description {

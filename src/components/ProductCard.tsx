@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import type { Product } from '../types/product'
+import { getProductColors } from '../utils/productColors'
 
 interface ProductCardProps {
   product: Product
@@ -12,11 +13,13 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
 
 function ProductCard({ product }: ProductCardProps) {
   const { search } = useLocation()
+  const productColors = getProductColors(product.id)
+  const colorNames = productColors.map((color) => color.name).join(', ')
 
   return (
     <article className="product-card">
       <Link
-        aria-label={`Xem chi tiết ${product.title}`}
+        aria-label={`Xem chi tiết ${product.title}. Màu có sẵn: ${colorNames}`}
         className="product-card-link"
         to={`/shop/${product.id}${search}`}
       >
@@ -33,6 +36,16 @@ function ProductCard({ product }: ProductCardProps) {
           <p className="product-card-price">
             {priceFormatter.format(product.price)}
           </p>
+          <div aria-hidden="true" className="product-card-colors">
+            {productColors.map((color) => (
+              <span
+                className="product-card-color-swatch"
+                key={color.id}
+                style={{ backgroundColor: color.value }}
+                title={color.name}
+              />
+            ))}
+          </div>
         </div>
       </Link>
     </article>
