@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '../app/hooks'
+import { addCartItem } from '../app/cartSlice'
 import { getProduct } from '../services/productService'
 import type { Product } from '../types/product'
 import { getProductColors } from '../utils/productColors'
@@ -11,9 +13,19 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
 
 const visibleThumbnailCount = 3
 
+interface CartFeedback {
+  type: 'error' | 'success'
+  message: string
+}
+
 function ProductDetailsPage() {
   const { productId } = useParams<{ productId: string }>()
-  const { search } = useLocation()
+  const dispatch = useAppDispatch()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const session = useAppSelector((state) => state.auth.session)
+  const cartItems = useAppSelector((state) => state.cart.items)
+  const { search } = location
   const shopUrl = `/shop${search}`
   const [product, setProduct] = useState<Product | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -23,6 +35,7 @@ function ProductDetailsPage() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0)
   const [selectedColorId, setSelectedColorId] = useState<string | null>(null)
+  const [cartFeedback, setCartFeedback] = useState<CartFeedback | null>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -46,6 +59,7 @@ function ProductDetailsPage() {
           setSelectedImageIndex(0)
           setThumbnailStartIndex(0)
           setSelectedColorId(null)
+          setCartFeedback(null)
           setError(null)
           setIsNotFound(false)
         }
@@ -144,6 +158,60 @@ function ProductDetailsPage() {
   const productColors = getProductColors(product.id)
   const selectedColor =
     productColors.find((color) => color.id === selectedColorId) ?? null
+
+  function handleAddToCart() {
+    const cartProduct = product
+
+    if (!cartProduct) {
+      return
+    }
+
+    if (!session) {
+      navigate('/login', { state: { from: location } })
+      return
+    }
+
+    if (!selectedColor) {
+      setCartFeedback({
+        type: 'error',
+        message: 'Vui lòng chọn màu trước khi thêm vào giỏ hàng.',
+      })
+      return
+    }
+
+    if (cartProduct.stock < 1) {
+      setCartFeedback({ type: 'error', message: 'Sản phẩm hiện đã hết hàng.' })
+      return
+    }
+
+    const existingItem = cartItems.find(
+      (item) =>
+        item.productId === cartProduct.id && item.color.id === selectedColor.id,
+    )
+
+    if (existingItem && existingItem.quantity >= cartProduct.stock) {
+      setCartFeedback({
+        type: 'error',
+        message: 'Số lượng trong giỏ đã đạt giới hạn tồn kho.',
+      })
+      return
+    }
+
+    dispatch(
+      addCartItem({
+        productId: cartProduct.id,
+        title: cartProduct.title,
+        price: cartProduct.price,
+        thumbnail: cartProduct.thumbnail,
+        color: selectedColor,
+        stock: cartProduct.stock,
+      }),
+    )
+    setCartFeedback({
+      type: 'success',
+      message: `${cartProduct.title} màu ${selectedColor.name} đã được thêm vào giỏ.`,
+    })
+  }
 
   return (
     <section className="product-details">
@@ -248,7 +316,10 @@ function ProductDetailsPage() {
                   selectedColorId === color.id ? ' selected' : ''
                 }`}
                 key={color.id}
-                onClick={() => setSelectedColorId(color.id)}
+                onClick={() => {
+                  setSelectedColorId(color.id)
+                  setCartFeedback(null)
+                }}
                 type="button"
               >
                 <span
@@ -277,11 +348,21 @@ function ProductDetailsPage() {
           </button>
           <button
             className="product-action-button product-action-button-secondary"
+            disabled={product.stock < 1}
+            onClick={handleAddToCart}
             type="button"
           >
             Thêm vào giỏ hàng
           </button>
         </div>
+        {cartFeedback && (
+          <p
+            className={`product-cart-feedback ${cartFeedback.type}`}
+            role={cartFeedback.type === 'error' ? 'alert' : 'status'}
+          >
+            {cartFeedback.message}
+          </p>
+        )}
       </div>
     </section>
   )

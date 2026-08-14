@@ -17,7 +17,11 @@ function getReturnUrl(locationState: unknown): string {
 
   const { pathname, search, hash } = locationState.from
 
-  if (pathname !== '/cart' && pathname !== '/profile') {
+  if (
+    pathname !== '/cart' &&
+    pathname !== '/profile' &&
+    !(typeof pathname === 'string' && pathname.startsWith('/shop/'))
+  ) {
     return '/shop'
   }
 

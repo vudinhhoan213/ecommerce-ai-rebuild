@@ -26,6 +26,9 @@ function App() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const session = useAppSelector((state) => state.auth.session)
+  const cartItemCount = useAppSelector((state) =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0),
+  )
 
   function handleLogout() {
     removeAuthSession()
@@ -49,7 +52,9 @@ function App() {
                   }
                   to={to}
                 >
-                  {label}
+                  {label === 'Giỏ hàng'
+                    ? `Giỏ hàng (${cartItemCount})`
+                    : label}
                 </NavLink>
               </li>
             ))}
