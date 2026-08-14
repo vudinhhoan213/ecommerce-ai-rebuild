@@ -18,3 +18,16 @@ export interface LoginCredentials {
   username: string
   password: string
 }
+
+export interface UserAddress {
+  address: string
+  city: string
+  state: string
+  postalCode: string
+  country: string
+}
+
+export interface UserProfile extends AuthUser {
+  phone: string
+  address: UserAddress
+}
