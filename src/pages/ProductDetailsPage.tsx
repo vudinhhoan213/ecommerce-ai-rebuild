@@ -8,6 +8,8 @@ const priceFormatter = new Intl.NumberFormat('en-US', {
   currency: 'USD',
 })
 
+const visibleThumbnailCount = 3
+
 function ProductDetailsPage() {
   const { productId } = useParams<{ productId: string }>()
   const { search } = useLocation()
@@ -17,6 +19,8 @@ function ProductDetailsPage() {
   const [isNotFound, setIsNotFound] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [resolvedProductId, setResolvedProductId] = useState(productId)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [thumbnailStartIndex, setThumbnailStartIndex] = useState(0)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -37,6 +41,8 @@ function ProductDetailsPage() {
           setIsNotFound(true)
         } else {
           setProduct(data)
+          setSelectedImageIndex(0)
+          setThumbnailStartIndex(0)
           setError(null)
           setIsNotFound(false)
         }
@@ -120,33 +126,94 @@ function ProductDetailsPage() {
     return null
   }
 
-  const mainImage = product.images[0] ?? product.thumbnail
+  const productImages =
+    product.images.length > 0 ? product.images : [product.thumbnail]
+  const mainImage = productImages[selectedImageIndex] ?? product.thumbnail
+  const lastThumbnailStartIndex = Math.max(
+    0,
+    productImages.length - visibleThumbnailCount,
+  )
+  const visibleImages = productImages.slice(
+    thumbnailStartIndex,
+    thumbnailStartIndex + visibleThumbnailCount,
+  )
+  const hasThumbnailNavigation = productImages.length > visibleThumbnailCount
 
   return (
     <section className="product-details">
       <div className="product-details-gallery">
         <div className="product-details-main-image-wrapper">
           <img
-            alt={product.title}
+            alt={`${product.title} - ảnh ${selectedImageIndex + 1}`}
             className="product-details-main-image"
             src={mainImage}
           />
         </div>
 
-        {product.images.length > 1 && (
+        {productImages.length > 1 && (
           <div
             aria-label="Các ảnh sản phẩm"
-            className="product-details-image-list"
+            className={`product-details-gallery-controls${
+              hasThumbnailNavigation ? '' : ' without-navigation'
+            }`}
           >
-            {product.images.map((image) => (
-              <img
-                alt={`Hình ảnh ${product.title}`}
-                className="product-details-thumbnail"
-                key={image}
-                loading="lazy"
-                src={image}
-              />
-            ))}
+            {hasThumbnailNavigation && (
+              <button
+                aria-label="Xem các ảnh trước"
+                className="product-details-gallery-arrow"
+                disabled={thumbnailStartIndex === 0}
+                onClick={() =>
+                  setThumbnailStartIndex((currentIndex) =>
+                    Math.max(0, currentIndex - 1),
+                  )
+                }
+                type="button"
+              >
+                <span aria-hidden="true">‹</span>
+              </button>
+            )}
+
+            <div className="product-details-image-list">
+              {visibleImages.map((image, visibleIndex) => {
+                const imageIndex = thumbnailStartIndex + visibleIndex
+
+                return (
+                  <button
+                    aria-label={`Xem ảnh ${imageIndex + 1} của ${product.title}`}
+                    aria-pressed={selectedImageIndex === imageIndex}
+                    className={`product-details-thumbnail-button${
+                      selectedImageIndex === imageIndex ? ' selected' : ''
+                    }`}
+                    key={`${image}-${imageIndex}`}
+                    onClick={() => setSelectedImageIndex(imageIndex)}
+                    type="button"
+                  >
+                    <img
+                      alt=""
+                      className="product-details-thumbnail"
+                      loading="lazy"
+                      src={image}
+                    />
+                  </button>
+                )
+              })}
+            </div>
+
+            {hasThumbnailNavigation && (
+              <button
+                aria-label="Xem các ảnh tiếp theo"
+                className="product-details-gallery-arrow"
+                disabled={thumbnailStartIndex === lastThumbnailStartIndex}
+                onClick={() =>
+                  setThumbnailStartIndex((currentIndex) =>
+                    Math.min(lastThumbnailStartIndex, currentIndex + 1),
+                  )
+                }
+                type="button"
+              >
+                <span aria-hidden="true">›</span>
+              </button>
+            )}
           </div>
         )}
       </div>
